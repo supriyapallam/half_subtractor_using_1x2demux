@@ -1,0 +1,40 @@
+//Design Code
+module demux1x2(output out1,out2,input sel,in);
+  assign out1=in&(~sel);
+  assign out2=in&sel;
+endmodule
+
+module hs(output diff,barrow,input a,b);
+  wire o1,o2,o3,o4,o5,o6,o7,o8,o9,o10;
+  demux1x2 a1(o1,o2,b,a);
+  demux1x2 a2(o3,o4,a,b);
+  demux1x2 a3(o5,o6,o1,1'b1);
+  demux1x2 a4(o7,o8,o3,o5);
+  demux1x2 a5(diff,o9,o7,1'b1);
+  demux1x2 a6(barrow,o10,a,b);
+endmodule
+
+//Test Bench Code
+module tb();
+  wire diff,barrow;
+  reg a,b;
+  hs DUT(diff,barrow,a,b);
+  initial
+    begin
+      integer i;
+      for(i=0;i<4;i=i+1)
+        begin
+          {a,b}=i;
+          #10;
+        end
+    end
+  initial
+    begin
+      $monitor("a=%b,b=%b,diff=%b,barrow=%b",a,b,diff,barrow);
+    end
+  initial
+    begin
+      $dumpfile("test.vcd");
+      $dumpvars(1);
+    end
+endmodule
